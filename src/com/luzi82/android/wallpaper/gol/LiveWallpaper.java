@@ -1,15 +1,9 @@
 package com.luzi82.android.wallpaper.gol;
 
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
 
 import android.graphics.Canvas;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.service.wallpaper.WallpaperService;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -35,23 +29,13 @@ public class LiveWallpaper extends WallpaperService {
     return new LiveWallpaperEngine();
   }
 
-  class LiveWallpaperEngine extends Engine implements SensorEventListener {
+  class LiveWallpaperEngine extends Engine {
     
     @Override
     public void onCreate(SurfaceHolder holder) {
       super.onCreate(holder);
       // Enable touch
       setTouchEventsEnabled(true);
-      
-      // Get the magnetic sensor
-      SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
-      List<Sensor> providerList = sm.getSensorList(Sensor.TYPE_MAGNETIC_FIELD);
-      Iterator<Sensor> i = providerList.iterator();
-      while (i.hasNext()) {
-        Sensor s = i.next();
-        Log.i(LOG_TAG, "Available Provider: " + s);
-        sm.registerListener(this, s, SensorManager.SENSOR_DELAY_NORMAL);
-      }
     }
 
     @Override
@@ -109,18 +93,6 @@ public class LiveWallpaper extends WallpaperService {
         int b = rand.nextInt(256);
         updateWallpaperColor(r, g, b);
       }
-    }
-
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-      // Not used in this code lab
-    }
-
-    public void onSensorChanged(SensorEvent event) {
-      int xValue = (int) event.values[0];
-      updateWallpaperColor(
-          Math.max(0, Math.min(255, 128 + xValue)),
-          Math.max(0, Math.min(255, 2 * -xValue + 128)),
-          Math.max(0, Math.min(255, 128 - xValue)));
     }
     
     private void updateWallpaperColor(int r, int g, int b) {
